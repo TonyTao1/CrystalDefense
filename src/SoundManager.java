@@ -1,16 +1,14 @@
-import java.io.File;
-import java.io.IOException;
 
+import java.io.File;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
-import javax.sound.sampled.LineUnavailableException;
-import javax.sound.sampled.UnsupportedAudioFileException;
 
 /**
  * Loads and plays the game sounds.
  */
 public class SoundManager {
+
     private Clip menuMusic;
     private Clip battleMusic;
     private Clip defeatSound;
@@ -29,11 +27,7 @@ public class SoundManager {
             Clip clip = AudioSystem.getClip();
             clip.open(audio);
             return clip;
-        } catch (IOException e) {
-            return null;
-        } catch (UnsupportedAudioFileException e) {
-            return null;
-        } catch (LineUnavailableException e) {
+        } catch (Exception e) {
             return null;
         }
     }

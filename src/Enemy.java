@@ -1,18 +1,18 @@
+
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Point;
-import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-
 import javax.imageio.ImageIO;
 
 /**
  * Represents one enemy moving along the fixed path toward the crystal.
  */
 public class Enemy implements Comparable<Enemy> {
+
     // Images are shared by all enemies.
     private static BufferedImage monsterImage = loadMonsterImage();
     private static BufferedImage eliteImage = loadImage("resources/enemy_elite.png");
@@ -131,7 +131,11 @@ public class Enemy implements Comparable<Enemy> {
     public void draw(Graphics2D g) {
         // Elite enemies are drawn bigger than normal enemies.
         BufferedImage image = getImage();
-        int imageHeight = type.equals("Elite") ? 88 : size + 28;
+        int imageHeight = size + 28;
+        if (type.equals("Elite")) {
+            imageHeight = 88;
+        }
+
         int imageWidth = imageHeight;
 
         if (image != null) {
@@ -193,11 +197,6 @@ public class Enemy implements Comparable<Enemy> {
     public boolean hasReachedCrystal() {
         // Used to damage the crystal.
         return reachedCrystal;
-    }
-
-    public Rectangle getBounds() {
-        // Basic hitbox if needed later.
-        return new Rectangle((int) x - size / 2, (int) y - size / 2, size, size);
     }
 
     public double distanceTo(int otherX, int otherY) {

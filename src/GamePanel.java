@@ -1,3 +1,4 @@
+
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -17,7 +18,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Random;
 
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
@@ -28,6 +28,7 @@ import javax.swing.JPanel;
  */
 @SuppressWarnings("serial")
 public class GamePanel extends JPanel implements Runnable, MouseListener, KeyListener {
+
     // Main screen and gameplay settings.
     private static final int SCREEN_WIDTH = 900;
     private static final int SCREEN_HEIGHT = 640;
@@ -58,7 +59,6 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, KeyLis
     private SoundManager soundManager;
     private BufferedImage menuBackgroundImage;
     private BufferedImage levelBackgroundImage;
-    private Random random;
 
     // Wave and level state.
     private String selectedTowerType;
@@ -104,7 +104,6 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, KeyLis
         soundManager = new SoundManager();
         menuBackgroundImage = loadImage("resources/menu_background.png");
         levelBackgroundImage = loadImage("resources/level_background.png");
-        random = new Random();
 
         createButtons();
         initializeGame();
@@ -177,76 +176,76 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, KeyLis
         levelPaths.clear();
 
         if (level == 1) {
-            addLevelPath(new int[] {
-                    -20, 320,
-                    170, 320,
-                    170, 150,
-                    410, 150,
-                    410, 455,
-                    690, 455,
-                    690, 230,
-                    870, 230
+            addLevelPath(new int[]{
+                -20, 320,
+                170, 320,
+                170, 150,
+                410, 150,
+                410, 455,
+                690, 455,
+                690, 230,
+                870, 230
             });
         } else if (level == 2) {
-            addLevelPath(new int[] {
-                    -20, 320,
-                    150, 320,
-                    150, 150,
-                    380, 150,
-                    380, 260,
-                    650, 260,
-                    650, 180,
-                    760, 180,
-                    760, 240,
-                    870, 240
+            addLevelPath(new int[]{
+                -20, 320,
+                150, 320,
+                150, 150,
+                380, 150,
+                380, 260,
+                650, 260,
+                650, 180,
+                760, 180,
+                760, 240,
+                870, 240
             });
-            addLevelPath(new int[] {
-                    -20, 320,
-                    150, 320,
-                    150, 500,
-                    390, 500,
-                    390, 390,
-                    635, 390,
-                    635, 300,
-                    760, 300,
-                    760, 240,
-                    870, 240
+            addLevelPath(new int[]{
+                -20, 320,
+                150, 320,
+                150, 500,
+                390, 500,
+                390, 390,
+                635, 390,
+                635, 300,
+                760, 300,
+                760, 240,
+                870, 240
             });
         } else {
-            addLevelPath(new int[] {
-                    -20, 180,
-                    120, 180,
-                    120, 110,
-                    330, 110,
-                    330, 300,
-                    550, 300,
-                    550, 170,
-                    760, 170,
-                    760, 240,
-                    870, 240
+            addLevelPath(new int[]{
+                -20, 180,
+                120, 180,
+                120, 110,
+                330, 110,
+                330, 300,
+                550, 300,
+                550, 170,
+                760, 170,
+                760, 240,
+                870, 240
             });
-            addLevelPath(new int[] {
-                    -20, 420,
-                    220, 420,
-                    220, 520,
-                    430, 520,
-                    430, 400,
-                    690, 400,
-                    690, 500,
-                    820, 500,
-                    820, 360,
-                    870, 360,
-                    870, 240
+            addLevelPath(new int[]{
+                -20, 420,
+                220, 420,
+                220, 520,
+                430, 520,
+                430, 400,
+                690, 400,
+                690, 500,
+                820, 500,
+                820, 360,
+                870, 360,
+                870, 240
             });
-            addLevelPath(new int[] {
-                    455, 660,
-                    455, 585,
-                    300, 585,
-                    300, 500,
-                    630, 500,
-                    630, 100,
-                    870, 100,
-                    870, 240
+            addLevelPath(new int[]{
+                455, 660,
+                455, 585,
+                300, 585,
+                300, 500,
+                630, 500,
+                630, 100,
+                870, 100,
+                870, 240
             });
         }
 
@@ -438,7 +437,7 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, KeyLis
         }
 
         // Level 2 and 3 use random paths.
-        int pathIndex = random.nextInt(levelPaths.size());
+        int pathIndex = (int) (Math.random() * levelPaths.size());
         enemies.add(new Enemy(type, levelPaths.get(pathIndex)));
     }
 
@@ -589,7 +588,7 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, KeyLis
         g.setColor(new Color(209, 228, 221));
         g.fillOval(620, 360, 250, 250);
         g.setColor(new Color(112, 160, 154));
-        g.fillPolygon(new int[] { 450, 490, 450, 410 }, new int[] { 420, 470, 520, 470 }, 4);
+        g.fillPolygon(new int[]{450, 490, 450, 410}, new int[]{420, 470, 520, 470}, 4);
     }
 
     private void drawCoverImage(Graphics2D g, BufferedImage image, int x, int y, int width, int height) {
@@ -668,11 +667,11 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, KeyLis
         int y = crystal.y;
 
         g.setColor(new Color(0, 188, 212));
-        g.fillPolygon(new int[] { x, x + 28, x, x - 28 }, new int[] { y - 38, y, y + 38, y }, 4);
+        g.fillPolygon(new int[]{x, x + 28, x, x - 28}, new int[]{y - 38, y, y + 38, y}, 4);
         g.setColor(Color.WHITE);
         g.drawLine(x - 8, y - 18, x + 10, y + 8);
         g.setColor(new Color(20, 86, 100));
-        g.drawPolygon(new int[] { x, x + 28, x, x - 28 }, new int[] { y - 38, y, y + 38, y }, 4);
+        g.drawPolygon(new int[]{x, x + 28, x, x - 28}, new int[]{y - 38, y, y + 38, y}, 4);
     }
 
     private Point getCrystalPoint() {
