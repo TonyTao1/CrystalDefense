@@ -423,7 +423,7 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, KeyLis
         // Later levels and waves spawn more enemies faster.
         soundManager.playBattleMusic();
         waveNumber++;
-        enemiesLeftToSpawn = 5 + waveNumber * 2 + (levelNumber - 1) * 3;
+        enemiesLeftToSpawn = getEnemyCount(levelNumber, waveNumber);
         spawnDelay = 82 - waveNumber * 8 - levelNumber * 6;
         if (spawnDelay < 28) {
             spawnDelay = 28;
@@ -436,21 +436,103 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, KeyLis
 
     private void spawnEnemy() {
         // Pick enemy type based on level and remaining spawn count.
-        String type = "Scout";
-
-        if (levelNumber == 2 && enemiesLeftToSpawn % 6 == 0) {
-            type = "Elite";
-        } else if (levelNumber >= 3 && enemiesLeftToSpawn % 4 == 0) {
-            type = "Elite";
-        } else if (levelNumber >= 3 && enemiesLeftToSpawn % 5 == 0) {
-            type = "Tank";
-        } else if ((levelNumber >= 2 || waveNumber >= 2) && enemiesLeftToSpawn % 3 == 0) {
-            type = "Runner";
-        }
+        String type = getEnemyType(levelNumber, waveNumber, enemiesLeftToSpawn);
 
         // Level 2 and 3 use random paths.
         int pathIndex = (int) (Math.random() * levelPaths.size());
         enemies.add(new Enemy(type, levelPaths.get(pathIndex)));
+    }
+
+    private int getEnemyCount(int level, int wave) {
+        return 5 + wave * 2 + (level - 1) * 3;
+    }
+
+    private String getEnemyType(int level, int wave, int countLeft) {
+        String type = "Scout";
+
+        if (level == 2 && countLeft % 6 == 0) {
+            type = "Elite";
+        } else if (level >= 3 && countLeft % 4 == 0) {
+            type = "Elite";
+        } else if (level >= 3 && countLeft % 5 == 0) {
+            type = "Tank";
+        } else if ((level >= 2 || wave >= 2) && countLeft % 3 == 0) {
+            type = "Runner";
+        }
+
+        return type;
+    }
+
+    private int getScoreForType(String type) {
+        if (type.equals("Elite")) {
+            return 320;
+        } else if (type.equals("Tank")) {
+            return 180;
+        } else if (type.equals("Runner")) {
+            return 90;
+        }
+
+        return 120;
+    }
+
+    private int getRewardForType(String type) {
+        if (type.equals("Elite")) {
+            return 30;
+        } else if (type.equals("Tank")) {
+            return 18;
+        } else if (type.equals("Runner")) {
+            return 10;
+        }
+
+        return 12;
+    }
+
+    private void teacherClearLevel() {
+        // Demo shortcut: give points for the rest of this level.
+        int scoreBonus = 0;
+        int coinBonus = 0;
+
+        for (int i = 0; i < enemies.size(); i++) {
+            Enemy enemy = enemies.get(i);
+            scoreBonus += enemy.getScoreValue();
+            coinBonus += enemy.getReward();
+        }
+
+        for (int i = enemiesLeftToSpawn; i >= 1; i--) {
+            String type = getEnemyType(levelNumber, waveNumber, i);
+            scoreBonus += getScoreForType(type);
+            coinBonus += getRewardForType(type);
+        }
+
+        for (int wave = waveNumber + 1; wave <= WAVES_PER_LEVEL; wave++) {
+            int total = getEnemyCount(levelNumber, wave);
+            for (int i = total; i >= 1; i--) {
+                String type = getEnemyType(levelNumber, wave, i);
+                scoreBonus += getScoreForType(type);
+                coinBonus += getRewardForType(type);
+            }
+        }
+
+        scoreManager.addScore(scoreBonus);
+        scoreManager.addCoins(coinBonus);
+        enemies.clear();
+        bullets.clear();
+        enemiesLeftToSpawn = 0;
+        waveInProgress = false;
+        soundManager.stopBattleMusic();
+
+        if (levelNumber >= TOTAL_LEVELS) {
+            scoreBoard.addScore(scoreManager.getScore());
+            screen = WIN;
+        } else {
+            levelNumber++;
+            setupLevel(levelNumber);
+            towers.clear();
+            waveNumber = 0;
+            wavePauseTimer = 150;
+            scoreManager.addCoins(80);
+            statusMessage = "Teacher shortcut cleared the level.";
+        }
     }
 
     @Override
@@ -909,6 +991,8 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, KeyLis
             } else {
                 startNewRun();
             }
+        } else if (screen == PLAYING && key == KeyEvent.VK_T) {
+            teacherClearLevel();
         } else if (screen == PLAYING && key == KeyEvent.VK_ESCAPE) {
             resetGame();
             screen = TITLE;

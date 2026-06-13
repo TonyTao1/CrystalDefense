@@ -35,6 +35,11 @@ public class ScoreManager {
         coins += amount;
     }
 
+    public void addScore(int amount) {
+        // Used by the teacher shortcut.
+        score += amount;
+    }
+
     public void damageCrystal(int amount) {
         // Crystal health should not go below zero.
         crystalHealth -= amount;
