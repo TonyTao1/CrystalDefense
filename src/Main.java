@@ -1,9 +1,11 @@
+
 import javax.swing.JFrame;
 
 /**
  * Starts Crystal Defense
  */
 public class Main {
+
     public static void main(String[] args) {
         JFrame frame = new JFrame("Crystal Defense");
         GamePanel gamePanel = new GamePanel();

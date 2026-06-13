@@ -12,6 +12,7 @@ import javax.imageio.ImageIO;
  * One enemy moving toward the crystal
  */
 public class Enemy implements Comparable<Enemy> {
+
     private static BufferedImage monsterImage = loadImage("resources/enemy_monster.png");
     private static BufferedImage eliteImage = loadImage("resources/enemy_elite.png");
 

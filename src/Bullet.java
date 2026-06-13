@@ -1,3 +1,4 @@
+
 import java.awt.Color;
 import java.awt.Graphics2D;
 
@@ -5,6 +6,7 @@ import java.awt.Graphics2D;
  * A bullet fired by a tower toward an enemy target
  */
 public class Bullet {
+
     private double x;
     private double y;
     private Enemy target;

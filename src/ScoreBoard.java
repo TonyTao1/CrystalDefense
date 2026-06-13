@@ -1,3 +1,4 @@
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -8,6 +9,7 @@ import java.util.Scanner;
  * Stores the top five winning scores
  */
 public class ScoreBoard {
+
     private ArrayList<Integer> scores;
     private String fileName;
     private boolean lastScoreKept;

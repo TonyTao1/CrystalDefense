@@ -1,7 +1,9 @@
+
 /**
  * Tracks score, coins, and crystal health
  */
 public class ScoreManager {
+
     private int coins;
     private int score;
     private int crystalHealth;

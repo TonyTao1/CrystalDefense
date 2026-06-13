@@ -1,3 +1,4 @@
+
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
@@ -11,6 +12,7 @@ import javax.imageio.ImageIO;
  * Represents a tower placed by the player
  */
 public class Tower {
+
     private static BufferedImage basicImage = loadImage("resources/tower_basic.png");
     private static BufferedImage rapidImage = loadImage("resources/tower_rapid.png");
     private static BufferedImage heavyImage = loadImage("resources/tower_heavy.png");
