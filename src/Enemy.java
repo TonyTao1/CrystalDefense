@@ -9,15 +9,12 @@ import java.util.ArrayList;
 import javax.imageio.ImageIO;
 
 /**
- * Represents one enemy moving along the fixed path toward the crystal.
+ * One enemy moving toward the crystal
  */
 public class Enemy implements Comparable<Enemy> {
-
-    // Images are shared by all enemies.
     private static BufferedImage monsterImage = loadImage("resources/enemy_monster.png");
     private static BufferedImage eliteImage = loadImage("resources/enemy_elite.png");
 
-    // Movement and stat values for one enemy.
     private double x;
     private double y;
     private int health;
@@ -34,7 +31,6 @@ public class Enemy implements Comparable<Enemy> {
     private boolean reachedCrystal;
 
     public Enemy(String type, ArrayList<Point> path) {
-        // Start at the first point of the chosen path.
         this.type = type;
         this.path = path;
         Point start = path.get(0);
@@ -47,7 +43,6 @@ public class Enemy implements Comparable<Enemy> {
     }
 
     private void setStatsForType(String type) {
-        // Each enemy type has different speed, health, and reward.
         if (type.equals("Elite")) {
             maxHealth = 230;
             speed = 0.75;
@@ -82,7 +77,6 @@ public class Enemy implements Comparable<Enemy> {
     }
 
     private static BufferedImage loadImage(String fileName) {
-        // Missing images are allowed; the enemy will use shapes instead.
         try {
             return ImageIO.read(new File(fileName));
         } catch (IOException e) {
@@ -91,7 +85,6 @@ public class Enemy implements Comparable<Enemy> {
     }
 
     public void update() {
-        // Stop moving once the enemy is finished.
         if (reachedCrystal || isDefeated()) {
             return;
         }
@@ -106,7 +99,6 @@ public class Enemy implements Comparable<Enemy> {
         double dy = target.y - y;
         double distance = Math.sqrt(dx * dx + dy * dy);
 
-        // Move to the next waypoint when close enough.
         if (distance <= speed) {
             x = target.x;
             y = target.y;
@@ -124,7 +116,6 @@ public class Enemy implements Comparable<Enemy> {
     }
 
     public void draw(Graphics2D g) {
-        // Elite enemies are drawn bigger than normal enemies.
         BufferedImage image = getImage();
         int imageHeight = size + 28;
         if (type.equals("Elite")) {
@@ -143,7 +134,6 @@ public class Enemy implements Comparable<Enemy> {
             drawY -= 14;
         }
 
-        // Draw the sprite if possible, otherwise draw a simple fallback.
         if (image != null) {
             g.drawImage(image, drawX, drawY, imageWidth, imageHeight, null);
         } else {
@@ -155,7 +145,6 @@ public class Enemy implements Comparable<Enemy> {
             g.drawOval(fallbackX, fallbackY, size, size);
         }
 
-        // Health bar.
         int barWidth = size + 8;
         if (type.equals("Elite")) {
             barWidth = imageWidth;
@@ -175,7 +164,6 @@ public class Enemy implements Comparable<Enemy> {
     }
 
     private BufferedImage getImage() {
-        // Use the elite sprite only for elite enemies.
         if (type.equals("Elite") && eliteImage != null) {
             return eliteImage;
         }
@@ -184,22 +172,18 @@ public class Enemy implements Comparable<Enemy> {
     }
 
     public void takeDamage(int damage) {
-        // Called by bullets when they hit.
         health -= damage;
     }
 
     public boolean isDefeated() {
-        // Enemy is removed when health reaches zero.
         return health <= 0;
     }
 
     public boolean hasReachedCrystal() {
-        // Used to damage the crystal.
         return reachedCrystal;
     }
 
     public double distanceTo(int otherX, int otherY) {
-        // Used by towers to check range.
         double dx = x - otherX;
         double dy = y - otherY;
         return Math.sqrt(dx * dx + dy * dy);
@@ -207,7 +191,6 @@ public class Enemy implements Comparable<Enemy> {
 
     @Override
     public int compareTo(Enemy other) {
-        // Farther enemies come first.
         if (distanceTravelled > other.distanceTravelled) {
             return -1;
         } else if (distanceTravelled < other.distanceTravelled) {

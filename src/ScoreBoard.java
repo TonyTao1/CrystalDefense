@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 /**
- * Stores the top five winning scores.
+ * Stores the top five winning scores
  */
 public class ScoreBoard {
     private ArrayList<Integer> scores;
@@ -20,7 +20,6 @@ public class ScoreBoard {
     }
 
     public void addScore(int score) {
-        // Add the new score, then keep only the best five.
         scores.add(score);
         sortScores();
 
@@ -28,17 +27,12 @@ public class ScoreBoard {
             scores.remove(scores.size() - 1);
         }
 
-        if (binarySearchScore(score) >= 0) {
-            lastScoreKept = true;
-        } else {
-            lastScoreKept = false;
-        }
+        lastScoreKept = binarySearchScore(score) >= 0;
 
         saveScores();
     }
 
     private void loadScores() {
-        // Missing file just means there are no scores yet.
         scores.clear();
 
         try {
@@ -50,7 +44,6 @@ public class ScoreBoard {
 
             input.close();
         } catch (IOException e) {
-            // No saved scores yet.
         }
 
         sortScores();
@@ -70,12 +63,10 @@ public class ScoreBoard {
 
             writer.close();
         } catch (IOException e) {
-            // The game can still run if saving fails.
         }
     }
 
     private void sortScores() {
-        // Sort from highest score to lowest score.
         for (int i = 0; i < scores.size() - 1; i++) {
             for (int j = i + 1; j < scores.size(); j++) {
                 if (scores.get(j) > scores.get(i)) {
@@ -88,7 +79,6 @@ public class ScoreBoard {
     }
 
     private int binarySearchScore(int score) {
-        // Scores are sorted from highest to lowest.
         int low = 0;
         int high = scores.size() - 1;
 

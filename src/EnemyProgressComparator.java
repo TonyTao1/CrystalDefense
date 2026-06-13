@@ -1,7 +1,7 @@
 import java.util.Comparator;
 
 /**
- * Sorts enemies by how far they have moved.
+ * Sorts enemies by how far they have moved
  */
 public class EnemyProgressComparator implements Comparator<Enemy> {
     @Override

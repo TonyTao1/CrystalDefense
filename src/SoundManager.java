@@ -5,7 +5,7 @@ import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 
 /**
- * Loads and plays the game sounds.
+ * Loads and plays the game sounds
  */
 public class SoundManager {
 
@@ -14,14 +14,12 @@ public class SoundManager {
     private Clip defeatSound;
 
     public SoundManager() {
-        // Load sounds once when the game starts.
         menuMusic = loadClip("resources/sounds/menu.wav");
         battleMusic = loadClip("resources/sounds/battle.wav");
         defeatSound = loadClip("resources/sounds/defeat.wav");
     }
 
     private Clip loadClip(String fileName) {
-        // Return null if the sound file cannot be loaded.
         try {
             AudioInputStream audio = AudioSystem.getAudioInputStream(new File(fileName));
             Clip clip = AudioSystem.getClip();
@@ -33,7 +31,6 @@ public class SoundManager {
     }
 
     public void playMenuMusic() {
-        // Loop music on the menu screens.
         if (menuMusic == null || menuMusic.isRunning()) {
             return;
         }
@@ -43,7 +40,6 @@ public class SoundManager {
     }
 
     public void stopMenuMusic() {
-        // Stop menu music before gameplay starts.
         if (menuMusic == null) {
             return;
         }
@@ -53,7 +49,6 @@ public class SoundManager {
     }
 
     public void playBattleMusic() {
-        // Loop the battle music during a level.
         if (battleMusic == null || battleMusic.isRunning()) {
             return;
         }
@@ -63,7 +58,6 @@ public class SoundManager {
     }
 
     public void stopBattleMusic() {
-        // Stop the loop when the level or game ends.
         if (battleMusic == null) {
             return;
         }
@@ -73,7 +67,6 @@ public class SoundManager {
     }
 
     public void playDefeatSound() {
-        // Restart the sound each time an enemy is defeated.
         if (defeatSound == null) {
             return;
         }

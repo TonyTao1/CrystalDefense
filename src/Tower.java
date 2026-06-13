@@ -8,15 +8,13 @@ import java.util.Collections;
 import javax.imageio.ImageIO;
 
 /**
- * Represents a tower placed by the player.
+ * Represents a tower placed by the player
  */
 public class Tower {
-    // Images are shared by all towers.
     private static BufferedImage basicImage = loadImage("resources/tower_basic.png");
     private static BufferedImage rapidImage = loadImage("resources/tower_rapid.png");
     private static BufferedImage heavyImage = loadImage("resources/tower_heavy.png");
 
-    // Position and attack stats.
     private int x;
     private int y;
     private String type;
@@ -34,7 +32,6 @@ public class Tower {
         this.y = y;
         cooldown = 0;
 
-        // Set tower stats based on the type.
         if (type.equals("Rapid")) {
             range = 115;
             damage = 9;
@@ -60,7 +57,6 @@ public class Tower {
     }
 
     private static BufferedImage loadImage(String fileName) {
-        // Return null if the image is missing.
         try {
             return ImageIO.read(new File(fileName));
         } catch (IOException e) {
@@ -69,12 +65,10 @@ public class Tower {
     }
 
     public void update(ArrayList<Enemy> enemies, ArrayList<Bullet> bullets) {
-        // Cooldown controls how fast the tower shoots.
         if (cooldown > 0) {
             cooldown--;
         }
 
-        // Shoot if an enemy is in range and the tower is ready.
         Enemy target = findTarget(enemies);
         if (target != null && cooldown <= 0) {
             bullets.add(new Bullet(x, y, target, damage, bulletColor));
@@ -83,7 +77,6 @@ public class Tower {
     }
 
     private Enemy findTarget(ArrayList<Enemy> enemies) {
-        // Collect all enemies this tower can hit.
         ArrayList<Enemy> targetsInRange = new ArrayList<Enemy>();
 
         for (int i = 0; i < enemies.size(); i++) {
@@ -97,13 +90,11 @@ public class Tower {
             return null;
         }
 
-        // Comparator sorts enemies by progress.
         Collections.sort(targetsInRange, new EnemyProgressComparator());
         return targetsInRange.get(0);
     }
 
     public void draw(Graphics2D g) {
-        // Transparent circle shows attack range.
         g.setColor(new Color(0, 0, 0, 25));
         g.fillOval(x - range, y - range, range * 2, range * 2);
 
@@ -119,7 +110,6 @@ public class Tower {
             int imageWidth = imageHeight * image.getWidth() / image.getHeight();
             g.drawImage(image, x - imageWidth / 2, y - imageHeight / 2, imageWidth, imageHeight, null);
         } else {
-            // Fallback shape if the image cannot load.
             g.setColor(baseColor);
             g.fillRoundRect(x - 16, y - 16, 32, 32, 8, 8);
             g.setColor(new Color(35, 45, 50));
@@ -132,7 +122,6 @@ public class Tower {
     }
 
     public boolean overlaps(int otherX, int otherY) {
-        // Prevents towers from being placed too close.
         double dx = x - otherX;
         double dy = y - otherY;
         return Math.sqrt(dx * dx + dy * dy) < 36;

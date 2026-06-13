@@ -2,10 +2,9 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 
 /**
- * A bullet fired by a tower toward an enemy target.
+ * A bullet fired by a tower toward an enemy target
  */
 public class Bullet {
-    // Current position and target.
     private double x;
     private double y;
     private Enemy target;
@@ -15,7 +14,6 @@ public class Bullet {
     private Color color;
 
     public Bullet(int startX, int startY, Enemy target, int damage, Color color) {
-        // Bullets start from the tower position.
         x = startX;
         y = startY;
         this.target = target;
@@ -26,7 +24,6 @@ public class Bullet {
     }
 
     public void update() {
-        // Remove the bullet if the target is no longer valid.
         if (!active || target == null || target.isDefeated() || target.hasReachedCrystal()) {
             active = false;
             return;
@@ -36,7 +33,6 @@ public class Bullet {
         double dy = target.getY() - y;
         double distance = Math.sqrt(dx * dx + dy * dy);
 
-        // Hit when the bullet gets close enough.
         if (distance <= speed || distance < 8) {
             target.takeDamage(damage);
             active = false;
@@ -47,12 +43,10 @@ public class Bullet {
     }
 
     public void draw(Graphics2D g) {
-        // Inactive bullets are skipped.
         if (!active) {
             return;
         }
 
-        // Draw a small circle as the bullet.
         g.setColor(color);
         g.fillOval((int) x - 4, (int) y - 4, 8, 8);
         g.setColor(new Color(45, 45, 45));
@@ -60,7 +54,6 @@ public class Bullet {
     }
 
     public boolean isActive() {
-        // GamePanel uses this to remove old bullets.
         return active;
     }
 }

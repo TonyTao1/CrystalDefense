@@ -22,13 +22,11 @@ import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 
 /**
- * Main panel for Crystal Defense. Handles the screens, game loop, input,
- * updates, and drawing.
+ * Main panel for Crystal Defense
  */
 @SuppressWarnings("serial")
 public class GamePanel extends JPanel implements Runnable, MouseListener, KeyListener {
 
-    // Main screen and gameplay settings.
     private static final int SCREEN_WIDTH = 900;
     private static final int SCREEN_HEIGHT = 640;
     private static final int FPS = 60;
@@ -47,12 +45,10 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, KeyLis
     private static final int GAME_OVER = 6;
     private static final int WIN = 7;
 
-    // Thread and screen state.
     private Thread thread;
     private boolean running;
     private int screen;
 
-    // Main game objects and collections.
     private ArrayList<Point> path;
     private ArrayList<ArrayList<Point>> levelPaths;
     private ArrayList<Enemy> enemies;
@@ -65,7 +61,6 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, KeyLis
     private BufferedImage menuBackgroundImage;
     private BufferedImage levelBackgroundImage;
 
-    // Wave and level state.
     private String selectedTowerType;
     private int levelNumber;
     private int waveNumber;
@@ -76,7 +71,6 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, KeyLis
     private boolean waveInProgress;
     private String statusMessage;
 
-    // Button hitboxes.
     private Rectangle startButton;
     private Rectangle selectLevelButton;
     private Rectangle scoreBoardButton;
@@ -93,7 +87,6 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, KeyLis
     private Rectangle heavyButton;
 
     public GamePanel() {
-        // Set up the panel before the game starts.
         setPreferredSize(new Dimension(SCREEN_WIDTH, SCREEN_HEIGHT));
         setBackground(new Color(232, 238, 232));
         setFocusable(true);
@@ -119,7 +112,6 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, KeyLis
     }
 
     private BufferedImage loadImage(String fileName) {
-        // Return null if the image is missing, so the game can still run.
         try {
             return ImageIO.read(new File(fileName));
         } catch (IOException e) {
@@ -128,7 +120,6 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, KeyLis
     }
 
     public void startGameThread() {
-        // Only start one game thread.
         if (thread == null) {
             running = true;
             thread = new Thread(this);
@@ -138,7 +129,6 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, KeyLis
 
     @Override
     public void run() {
-        // Simple game loop: update, draw, wait.
         while (running) {
             update();
             repaint();
@@ -152,7 +142,6 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, KeyLis
     }
 
     private void createButtons() {
-        // These rectangles are used for mouse click detection.
         startButton = new Rectangle(350, 220, 200, 45);
         selectLevelButton = new Rectangle(350, 275, 200, 45);
         scoreBoardButton = new Rectangle(350, 330, 200, 45);
@@ -170,7 +159,6 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, KeyLis
     }
 
     private void initializeGame() {
-        // Store tower costs for the top bar.
         towerCosts.put("Basic", 40);
         towerCosts.put("Rapid", 65);
         towerCosts.put("Heavy", 90);
@@ -179,7 +167,6 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, KeyLis
     }
 
     private void setupLevel(int level) {
-        // Each level can have one or more possible enemy paths.
         path.clear();
         levelPaths.clear();
 
@@ -263,7 +250,6 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, KeyLis
     }
 
     private void addLevelPath(int[] coordinates) {
-        // Convert pairs of numbers into Point objects.
         ArrayList<Point> newPath = new ArrayList<Point>();
 
         for (int i = 0; i < coordinates.length; i += 2) {
@@ -274,12 +260,10 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, KeyLis
     }
 
     private void resetGame() {
-        // Default reset starts at level 1.
         resetGame(1);
     }
 
     private void resetGame(int startLevel) {
-        // Clear the board and prepare a fresh run.
         soundManager.stopBattleMusic();
         enemies.clear();
         towers.clear();
@@ -299,12 +283,10 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, KeyLis
     }
 
     private void startNewRun() {
-        // Start from the beginning.
         startLevel(1);
     }
 
     private void startLevel(int level) {
-        // Used by the level select menu.
         resetGame(level);
         soundManager.stopMenuMusic();
         screen = PLAYING;
@@ -313,7 +295,6 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, KeyLis
     }
 
     private void update() {
-        // Menu screens do not need gameplay updates.
         if (screen != PLAYING) {
             return;
         }
@@ -326,7 +307,6 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, KeyLis
     }
 
     private void updateWaveSpawning() {
-        // Spawn enemies one at a time instead of all at once.
         if (!waveInProgress || enemiesLeftToSpawn <= 0) {
             return;
         }
@@ -340,7 +320,6 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, KeyLis
     }
 
     private void updateEnemies() {
-        // Loop backwards because enemies may be removed.
         for (int i = enemies.size() - 1; i >= 0; i--) {
             Enemy enemy = enemies.get(i);
             enemy.update();
@@ -361,19 +340,16 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, KeyLis
             }
         }
 
-        // Enemy uses Comparable to sort by progress.
         Collections.sort(enemies);
     }
 
     private void updateTowers() {
-        // Towers decide if they can shoot this frame.
         for (int i = 0; i < towers.size(); i++) {
             towers.get(i).update(enemies, bullets);
         }
     }
 
     private void updateBullets() {
-        // Remove bullets after they hit or lose their target.
         for (int i = bullets.size() - 1; i >= 0; i--) {
             Bullet bullet = bullets.get(i);
             bullet.update();
@@ -385,7 +361,6 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, KeyLis
     }
 
     private void checkWaveFinished() {
-        // Wait until all spawned enemies are gone.
         if (screen != PLAYING || enemiesLeftToSpawn > 0 || !enemies.isEmpty()) {
             return;
         }
@@ -393,7 +368,6 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, KeyLis
         waveInProgress = false;
 
         if (waveNumber >= WAVES_PER_LEVEL) {
-            // Move to the next level, or win after level 3.
             soundManager.stopBattleMusic();
             if (levelNumber >= TOTAL_LEVELS) {
                 scoreBoard.addScore(scoreManager.getScore());
@@ -420,7 +394,6 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, KeyLis
     }
 
     private void startNextWave() {
-        // Later levels and waves spawn more enemies faster.
         soundManager.playBattleMusic();
         waveNumber++;
         enemiesLeftToSpawn = getEnemyCount(levelNumber, waveNumber);
@@ -435,10 +408,8 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, KeyLis
     }
 
     private void spawnEnemy() {
-        // Pick enemy type based on level and remaining spawn count.
         String type = getEnemyType(levelNumber, waveNumber, enemiesLeftToSpawn);
 
-        // Level 2 and 3 use random paths.
         int pathIndex = (int) (Math.random() * levelPaths.size());
         enemies.add(new Enemy(type, levelPaths.get(pathIndex)));
     }
@@ -488,7 +459,6 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, KeyLis
     }
 
     private void teacherClearLevel() {
-        // Demo shortcut: give points for the rest of this level.
         int scoreBonus = 0;
         int coinBonus = 0;
 
@@ -540,7 +510,6 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, KeyLis
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g;
 
-        // Draw the correct screen.
         if (screen == TITLE) {
             drawTitleScreen(g2);
         } else if (screen == LEVEL_SELECT) {
@@ -561,7 +530,6 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, KeyLis
     }
 
     private void drawTitleScreen(Graphics2D g) {
-        // The image already has the logo, so text is only drawn as backup.
         drawMenuBackground(g);
 
         if (menuBackgroundImage == null) {
@@ -580,7 +548,6 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, KeyLis
     }
 
     private void drawLevelSelectScreen(Graphics2D g) {
-        // Lets the player start from any level.
         drawMenuBackground(g);
         g.setColor(Color.WHITE);
         g.setFont(new Font("Arial", Font.BOLD, 38));
@@ -596,7 +563,6 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, KeyLis
     }
 
     private void drawInstructionsScreen(Graphics2D g) {
-        // Basic rules and controls.
         drawMenuBackground(g);
         g.setColor(Color.WHITE);
         g.setFont(new Font("Arial", Font.BOLD, 38));
@@ -616,7 +582,6 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, KeyLis
     }
 
     private void drawScoreBoardScreen(Graphics2D g) {
-        // Shows the top five winning scores.
         drawMenuBackground(g);
         g.setColor(Color.WHITE);
         g.setFont(new Font("Arial", Font.BOLD, 38));
@@ -642,7 +607,6 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, KeyLis
     }
 
     private void drawAboutScreen(Graphics2D g) {
-        // Project information for the required about page.
         drawMenuBackground(g);
         g.setColor(Color.WHITE);
         g.setFont(new Font("Arial", Font.BOLD, 38));
@@ -659,7 +623,6 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, KeyLis
     }
 
     private void drawPlayingScreen(Graphics2D g) {
-        // Draw order matters: map first, then objects, then UI.
         drawMap(g);
         drawPath(g);
         drawCrystal(g);
@@ -680,7 +643,6 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, KeyLis
     }
 
     private void drawEndScreen(Graphics2D g, String title, String subtitle) {
-        // Shared screen for win and game over.
         drawMenuBackground(g);
         g.setColor(Color.WHITE);
         g.setFont(new Font("Arial", Font.BOLD, 44));
@@ -701,7 +663,6 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, KeyLis
     }
 
     private void drawMenuBackground(Graphics2D g) {
-        // Use the image background if it is available.
         if (menuBackgroundImage != null) {
             g.drawImage(menuBackgroundImage, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, null);
             g.setColor(new Color(0, 0, 0, 80));
@@ -709,7 +670,6 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, KeyLis
             return;
         }
 
-        // Backup background if the image file is missing.
         g.setColor(new Color(225, 236, 228));
         g.fillRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
         g.setColor(new Color(183, 214, 204));
@@ -721,7 +681,6 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, KeyLis
     }
 
     private void drawMap(Graphics2D g) {
-        // Draw the level background and grid.
         if (levelBackgroundImage != null) {
             g.drawImage(levelBackgroundImage, 0, TOP_BAR_HEIGHT, SCREEN_WIDTH, SCREEN_HEIGHT - TOP_BAR_HEIGHT, null);
             g.setColor(new Color(0, 0, 0, 45));
@@ -742,7 +701,6 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, KeyLis
     }
 
     private void drawPath(Graphics2D g) {
-        // Draw every path for the current level.
         g.setStroke(new BasicStroke(PATH_WIDTH));
         g.setColor(new Color(176, 151, 112));
 
@@ -770,7 +728,6 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, KeyLis
     }
 
     private void drawCrystal(Graphics2D g) {
-        // Crystal is placed at the end of the main path.
         Point crystal;
         if (!path.isEmpty()) {
             crystal = path.get(path.size() - 1);
@@ -790,7 +747,6 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, KeyLis
     }
 
     private void drawTopBar(Graphics2D g) {
-        // Top bar shows game stats and tower choices.
         g.setColor(new Color(245, 248, 247));
         g.fillRect(0, 0, SCREEN_WIDTH, TOP_BAR_HEIGHT);
         g.setColor(new Color(69, 92, 94));
@@ -815,7 +771,6 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, KeyLis
     }
 
     private void drawButton(Graphics2D g, Rectangle button, String text, boolean selected) {
-        // Same button style is reused across screens.
         if (selected) {
             g.setColor(new Color(94, 151, 145));
         } else {
@@ -840,13 +795,11 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, KeyLis
     }
 
     private void drawCenteredString(Graphics2D g, String text, int y) {
-        // Helper for menu text.
         int textWidth = g.getFontMetrics().stringWidth(text);
         g.drawString(text, (SCREEN_WIDTH - textWidth) / 2, y);
     }
 
     private void placeTower(int mouseX, int mouseY) {
-        // Snap tower placement to the grid.
         int towerX = mouseX / GRID_SIZE * GRID_SIZE + GRID_SIZE / 2;
         int towerY = mouseY / GRID_SIZE * GRID_SIZE + GRID_SIZE / 2;
 
@@ -865,13 +818,77 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, KeyLis
         statusMessage = selectedTowerType + " tower placed.";
     }
 
+    private void returnToTitle() {
+        resetGame();
+        screen = TITLE;
+        soundManager.playMenuMusic();
+    }
+
+    private void restartFromCurrentLevel() {
+        startLevel(levelNumber);
+    }
+
+    private void startFromTitleButtons(int x, int y) {
+        if (startButton.contains(x, y)) {
+            startNewRun();
+        } else if (selectLevelButton.contains(x, y)) {
+            screen = LEVEL_SELECT;
+        } else if (scoreBoardButton.contains(x, y)) {
+            screen = SCORE_BOARD;
+        } else if (instructionsButton.contains(x, y)) {
+            screen = INSTRUCTIONS;
+        } else if (aboutButton.contains(x, y)) {
+            screen = ABOUT;
+        }
+    }
+
+    private void startFromLevelSelectButtons(int x, int y) {
+        if (levelOneButton.contains(x, y)) {
+            startLevel(1);
+        } else if (levelTwoButton.contains(x, y)) {
+            startLevel(2);
+        } else if (levelThreeButton.contains(x, y)) {
+            startLevel(3);
+        } else if (backButton.contains(x, y)) {
+            screen = TITLE;
+        }
+    }
+
+    private void handleBackButtonOnly(int x, int y) {
+        if (backButton.contains(x, y)) {
+            screen = TITLE;
+        }
+    }
+
+    private void handleEndScreenButtons(int x, int y) {
+        if (retryButton.contains(x, y)) {
+            if (screen == GAME_OVER) {
+                restartFromCurrentLevel();
+            } else {
+                startNewRun();
+            }
+        } else if (menuButton.contains(x, y)) {
+            returnToTitle();
+        }
+    }
+
+    private void handlePlayingButtons(int x, int y) {
+        if (basicButton.contains(x, y)) {
+            selectedTowerType = "Basic";
+        } else if (rapidButton.contains(x, y)) {
+            selectedTowerType = "Rapid";
+        } else if (heavyButton.contains(x, y)) {
+            selectedTowerType = "Heavy";
+        } else {
+            placeTower(x, y);
+        }
+    }
+
     private boolean isValidTowerLocation(int x, int y) {
-        // Towers cannot be placed off screen or on the top bar.
         if (y < TOP_BAR_HEIGHT + 20 || x < 20 || x > SCREEN_WIDTH - 20 || y > SCREEN_HEIGHT - 20) {
             return false;
         }
 
-        // Towers also cannot block any enemy path.
         for (int pathIndex = 0; pathIndex < levelPaths.size(); pathIndex++) {
             ArrayList<Point> currentPath = levelPaths.get(pathIndex);
 
@@ -884,7 +901,6 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, KeyLis
             }
         }
 
-        // Keep towers from sitting on top of each other.
         for (int i = 0; i < towers.size(); i++) {
             if (towers.get(i).overlaps(x, y)) {
                 return false;
@@ -895,7 +911,6 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, KeyLis
     }
 
     private boolean isNearPathSegment(int x, int y, Point a, Point b) {
-        // All paths are horizontal or vertical, so this check stays simple.
         int buffer = PATH_WIDTH / 2 + 22;
 
         if (a.x == b.x) {
@@ -925,78 +940,36 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, KeyLis
 
     @Override
     public void mousePressed(MouseEvent e) {
-        // Mouse input changes screens or places towers.
         int x = e.getX();
         int y = e.getY();
 
         if (screen == TITLE) {
-            if (startButton.contains(x, y)) {
-                startNewRun();
-            } else if (selectLevelButton.contains(x, y)) {
-                screen = LEVEL_SELECT;
-            } else if (scoreBoardButton.contains(x, y)) {
-                screen = SCORE_BOARD;
-            } else if (instructionsButton.contains(x, y)) {
-                screen = INSTRUCTIONS;
-            } else if (aboutButton.contains(x, y)) {
-                screen = ABOUT;
-            }
+            startFromTitleButtons(x, y);
         } else if (screen == LEVEL_SELECT) {
-            if (levelOneButton.contains(x, y)) {
-                startLevel(1);
-            } else if (levelTwoButton.contains(x, y)) {
-                startLevel(2);
-            } else if (levelThreeButton.contains(x, y)) {
-                startLevel(3);
-            } else if (backButton.contains(x, y)) {
-                screen = TITLE;
-            }
+            startFromLevelSelectButtons(x, y);
         } else if (screen == INSTRUCTIONS || screen == ABOUT || screen == SCORE_BOARD) {
-            if (backButton.contains(x, y)) {
-                screen = TITLE;
-            }
+            handleBackButtonOnly(x, y);
         } else if (screen == GAME_OVER || screen == WIN) {
-            if (retryButton.contains(x, y)) {
-                if (screen == GAME_OVER) {
-                    startLevel(levelNumber);
-                } else {
-                    startNewRun();
-                }
-            } else if (menuButton.contains(x, y)) {
-                resetGame();
-                screen = TITLE;
-                soundManager.playMenuMusic();
-            }
+            handleEndScreenButtons(x, y);
         } else if (screen == PLAYING) {
-            if (basicButton.contains(x, y)) {
-                selectedTowerType = "Basic";
-            } else if (rapidButton.contains(x, y)) {
-                selectedTowerType = "Rapid";
-            } else if (heavyButton.contains(x, y)) {
-                selectedTowerType = "Heavy";
-            } else {
-                placeTower(x, y);
-            }
+            handlePlayingButtons(x, y);
         }
     }
 
     @Override
     public void keyPressed(KeyEvent e) {
-        // Keyboard shortcuts for retry and menu.
         int key = e.getKeyCode();
 
         if ((screen == GAME_OVER || screen == WIN) && key == KeyEvent.VK_R) {
             if (screen == GAME_OVER) {
-                startLevel(levelNumber);
+                restartFromCurrentLevel();
             } else {
                 startNewRun();
             }
         } else if (screen == PLAYING && key == KeyEvent.VK_T) {
             teacherClearLevel();
         } else if (screen == PLAYING && key == KeyEvent.VK_ESCAPE) {
-            resetGame();
-            screen = TITLE;
-            soundManager.playMenuMusic();
+            returnToTitle();
         }
     }
 
