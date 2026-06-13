@@ -92,10 +92,12 @@ public class Enemy implements Comparable<Enemy> {
      * Moves the enemy toward the next waypoint on its path
      */
     public void update() {
+        // Stop moving if already dead or at the crystal
         if (reachedCrystal || isDefeated()) {
             return;
         }
 
+        // Check if we've gone past the last waypoint
         if (targetWaypoint >= path.size()) {
             reachedCrystal = true;
             return;
@@ -106,16 +108,19 @@ public class Enemy implements Comparable<Enemy> {
         double dy = target.y - y;
         double distance = Math.sqrt(dx * dx + dy * dy);
 
+        // If close enough, snap to waypoint and move to next one
         if (distance <= speed) {
             x = target.x;
             y = target.y;
             distanceTravelled += distance;
             targetWaypoint++;
 
+            // Check if we've reached the end after advancing
             if (targetWaypoint >= path.size()) {
                 reachedCrystal = true;
             }
         } else {
+            // Move toward the waypoint at current speed
             x += dx / distance * speed;
             y += dy / distance * speed;
             distanceTravelled += speed;
@@ -128,25 +133,30 @@ public class Enemy implements Comparable<Enemy> {
     public void draw(Graphics2D g) {
         BufferedImage image = getImage();
         int imageHeight = size + 28;
+        // Elite enemies are drawn larger
         if (type.equals("Elite")) {
             imageHeight = 88;
         }
 
         int imageWidth = imageHeight;
 
+        // Calculate width based on image aspect ratio
         if (image != null) {
             imageWidth = imageHeight * image.getWidth() / image.getHeight();
         }
 
         int drawX = (int) x - imageWidth / 2;
         int drawY = (int) y - imageHeight / 2;
+        // Elite sprite needs extra offset adjustment
         if (type.equals("Elite")) {
             drawY -= 14;
         }
 
+        // Draw the sprite or fallback shape
         if (image != null) {
             g.drawImage(image, drawX, drawY, imageWidth, imageHeight, null);
         } else {
+            // Fallback colored circle if image is missing
             int fallbackX = (int) x - size / 2;
             int fallbackY = (int) y - size / 2;
             g.setColor(color);
@@ -155,6 +165,7 @@ public class Enemy implements Comparable<Enemy> {
             g.drawOval(fallbackX, fallbackY, size, size);
         }
 
+        // Draw health bar above the enemy
         int barWidth = size + 8;
         if (type.equals("Elite")) {
             barWidth = imageWidth;
@@ -165,10 +176,13 @@ public class Enemy implements Comparable<Enemy> {
         int barY = drawY - 10;
         double healthRatio = (double) health / maxHealth;
 
+        // Background bar (gray)
         g.setColor(new Color(95, 95, 95));
         g.fillRect(barX, barY, barWidth, barHeight);
+        // Health portion (green)
         g.setColor(new Color(76, 175, 80));
         g.fillRect(barX, barY, (int) (barWidth * healthRatio), barHeight);
+        // Border
         g.setColor(new Color(35, 35, 35));
         g.drawRect(barX, barY, barWidth, barHeight);
     }
@@ -200,6 +214,10 @@ public class Enemy implements Comparable<Enemy> {
         double dx = x - otherX;
         double dy = y - otherY;
         return Math.sqrt(dx * dx + dy * dy);
+    }
+
+    public double distanceTo(Point p) {
+        return distanceTo(p.x, p.y);
     }
 
     /**

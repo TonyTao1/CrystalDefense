@@ -333,15 +333,18 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, KeyLis
     }
 
     private void updateEnemies() {
+        // Loop backwards so we can safely remove enemies during iteration
         for (int i = enemies.size() - 1; i >= 0; i--) {
             Enemy enemy = enemies.get(i);
             enemy.update();
 
             if (enemy.isDefeated()) {
+                // Enemy died, award the player and remove it
                 soundManager.playDefeatSound();
                 scoreManager.recordDefeat(enemy);
                 enemies.remove(i);
             } else if (enemy.hasReachedCrystal()) {
+                // Enemy got through, damage the crystal and check for game over
                 scoreManager.damageCrystal(1);
                 enemies.remove(i);
                 statusMessage = "An enemy reached the crystal.";
@@ -353,6 +356,7 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, KeyLis
             }
         }
 
+        // Sort so towers always pick the furthest enemy first
         Collections.sort(enemies);
     }
 
@@ -363,10 +367,12 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, KeyLis
     }
 
     private void updateBullets() {
+        // Loop backwards to safely remove inactive bullets
         for (int i = bullets.size() - 1; i >= 0; i--) {
             Bullet bullet = bullets.get(i);
             bullet.update();
 
+            // Remove bullets that have hit or lost their target
             if (!bullet.isActive()) {
                 bullets.remove(i);
             }
@@ -374,6 +380,7 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, KeyLis
     }
 
     private void checkWaveFinished() {
+        // Only check when playing and all enemies from this wave are gone
         if (screen != PLAYING || enemiesLeftToSpawn > 0 || !enemies.isEmpty()) {
             return;
         }
@@ -384,11 +391,13 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, KeyLis
             // Last wave done, either move up or finish the run
             soundManager.stopBattleMusic();
             if (levelNumber >= TOTAL_LEVELS) {
+                // All levels beaten
                 scoreBoard.addScore(scoreManager.getScore());
                 screen = WIN;
                 return;
             }
 
+            // Advance to next level and reset the tower board
             levelNumber++;
             setupLevel(levelNumber);
             towers.clear();
@@ -400,6 +409,7 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, KeyLis
             return;
         }
 
+        // Pause between waves
         wavePauseTimer--;
         statusMessage = "Next wave begins soon.";
         if (wavePauseTimer <= 0) {
@@ -945,6 +955,10 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, KeyLis
         return true;
     }
 
+    private boolean isValidTowerLocation(Point p) {
+        return isValidTowerLocation(p.x, p.y);
+    }
+
     /**
      * Checks if a point sits too close to a straight path segment
      */
@@ -974,6 +988,10 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, KeyLis
             right = right + buffer;
             return Math.abs(y - a.y) < buffer && x >= left && x <= right;
         }
+    }
+
+    private boolean isNearPathSegment(Point p, Point a, Point b) {
+        return isNearPathSegment(p.x, p.y, a, b);
     }
 
     @Override
