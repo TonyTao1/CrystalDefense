@@ -14,6 +14,7 @@ public class ScoreManager {
     }
 
     public void reset() {
+        // Fresh run, so start with the usual opening values
         coins = 120;
         score = 0;
         crystalHealth = 20;
@@ -39,12 +40,14 @@ public class ScoreManager {
 
     public void damageCrystal(int amount) {
         crystalHealth -= amount;
+        // Keep the health bar from going negative
         if (crystalHealth < 0) {
             crystalHealth = 0;
         }
     }
 
     public void recordDefeat(Enemy enemy) {
+        // Defeats feed both coins and score
         enemiesDefeated++;
         addCoins(enemy.getReward());
         score += enemy.getScoreValue();

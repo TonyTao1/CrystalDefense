@@ -43,6 +43,9 @@ public class Enemy implements Comparable<Enemy> {
         setStatsForType(type);
     }
 
+    /**
+     * Sets the movement and reward values for the chosen enemy type
+     */
     private void setStatsForType(String type) {
         if (type.equals("Elite")) {
             maxHealth = 230;
@@ -85,6 +88,9 @@ public class Enemy implements Comparable<Enemy> {
         }
     }
 
+    /**
+     * Moves the enemy toward the next waypoint on its path
+     */
     public void update() {
         if (reachedCrystal || isDefeated()) {
             return;
@@ -116,6 +122,9 @@ public class Enemy implements Comparable<Enemy> {
         }
     }
 
+    /**
+     * Draws the enemy sprite or a simple fallback shape
+     */
     public void draw(Graphics2D g) {
         BufferedImage image = getImage();
         int imageHeight = size + 28;
@@ -184,12 +193,18 @@ public class Enemy implements Comparable<Enemy> {
         return reachedCrystal;
     }
 
+    /**
+     * Used by towers to sort targets by progress along the path
+     */
     public double distanceTo(int otherX, int otherY) {
         double dx = x - otherX;
         double dy = y - otherY;
         return Math.sqrt(dx * dx + dy * dy);
     }
 
+    /**
+     * Farther enemies should be processed first
+     */
     @Override
     public int compareTo(Enemy other) {
         if (distanceTravelled > other.distanceTravelled) {

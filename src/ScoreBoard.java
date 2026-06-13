@@ -21,6 +21,9 @@ public class ScoreBoard {
         loadScores();
     }
 
+    /**
+     * Adds a score, keeps only the top five, and saves the result
+     */
     public void addScore(int score) {
         scores.add(score);
         sortScores();
@@ -34,6 +37,9 @@ public class ScoreBoard {
         saveScores();
     }
 
+    /**
+     * Reads saved scores from disk if the file exists
+     */
     private void loadScores() {
         scores.clear();
 
@@ -55,6 +61,9 @@ public class ScoreBoard {
         }
     }
 
+    /**
+     * Writes the current score list back to disk
+     */
     private void saveScores() {
         try {
             FileWriter writer = new FileWriter(fileName);
@@ -68,6 +77,9 @@ public class ScoreBoard {
         }
     }
 
+    /**
+     * Sorts scores from highest to lowest
+     */
     private void sortScores() {
         for (int i = 0; i < scores.size() - 1; i++) {
             for (int j = i + 1; j < scores.size(); j++) {
@@ -80,12 +92,15 @@ public class ScoreBoard {
         }
     }
 
+    /**
+     * Checks whether the score still exists after trimming the list
+     */
     private int binarySearchScore(int score) {
         int low = 0;
         int high = scores.size() - 1;
 
         while (low <= high) {
-            int middle = (low + high) / 2;
+            int middle = low + (high - low) / 2;
             int middleScore = scores.get(middle);
 
             if (middleScore == score) {

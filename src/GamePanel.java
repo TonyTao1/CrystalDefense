@@ -27,23 +27,23 @@ import javax.swing.JPanel;
 @SuppressWarnings("serial")
 public class GamePanel extends JPanel implements Runnable, MouseListener, KeyListener {
 
-    private static final int SCREEN_WIDTH = 900;
-    private static final int SCREEN_HEIGHT = 640;
-    private static final int FPS = 60;
-    private static final int TOP_BAR_HEIGHT = 82;
-    private static final int PATH_WIDTH = 48;
-    private static final int TOTAL_LEVELS = 3;
-    private static final int WAVES_PER_LEVEL = 3;
-    private static final int GRID_SIZE = 40;
+    private static int SCREEN_WIDTH = 900;
+    private static int SCREEN_HEIGHT = 640;
+    private static int FPS = 60;
+    private static int TOP_BAR_HEIGHT = 82;
+    private static int PATH_WIDTH = 48;
+    private static int TOTAL_LEVELS = 3;
+    private static int WAVES_PER_LEVEL = 3;
+    private static int GRID_SIZE = 40;
 
-    private static final int TITLE = 0;
-    private static final int LEVEL_SELECT = 1;
-    private static final int INSTRUCTIONS = 2;
-    private static final int ABOUT = 3;
-    private static final int SCORE_BOARD = 4;
-    private static final int PLAYING = 5;
-    private static final int GAME_OVER = 6;
-    private static final int WIN = 7;
+    private static int TITLE = 0;
+    private static int LEVEL_SELECT = 1;
+    private static int INSTRUCTIONS = 2;
+    private static int ABOUT = 3;
+    private static int SCORE_BOARD = 4;
+    private static int PLAYING = 5;
+    private static int GAME_OVER = 6;
+    private static int WIN = 7;
 
     private Thread thread;
     private boolean running;
@@ -119,7 +119,11 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, KeyLis
         }
     }
 
+    /**
+     * Starts the game loop if it is not already running
+     */
     public void startGameThread() {
+        // The window can ask twice, so keep the thread guard in one place
         if (thread == null) {
             running = true;
             thread = new Thread(this);
@@ -166,10 +170,14 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, KeyLis
         resetGame();
     }
 
+    /**
+     * Builds the enemy paths for the chosen level
+     */
     private void setupLevel(int level) {
         path.clear();
         levelPaths.clear();
 
+        // Level 2 and 3 get more than one path so the map changes a bit
         if (level == 1) {
             addLevelPath(new int[]{
                 -20, 320,
@@ -263,6 +271,9 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, KeyLis
         resetGame(1);
     }
 
+    /**
+     * Clears the board and sets up a fresh run from the requested level
+     */
     private void resetGame(int startLevel) {
         soundManager.stopBattleMusic();
         enemies.clear();
@@ -271,6 +282,7 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, KeyLis
         scoreManager.reset();
         levelNumber = startLevel;
         setupLevel(levelNumber);
+        // Later levels start with a small coin boost
         scoreManager.addCoins((startLevel - 1) * 80);
         selectedTowerType = "Basic";
         waveNumber = 0;
@@ -295,6 +307,7 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, KeyLis
     }
 
     private void update() {
+        // Menu screens stay still, only the play screen keeps ticking
         if (screen != PLAYING) {
             return;
         }
@@ -368,6 +381,7 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, KeyLis
         waveInProgress = false;
 
         if (waveNumber >= WAVES_PER_LEVEL) {
+            // Last wave done, either move up or finish the run
             soundManager.stopBattleMusic();
             if (levelNumber >= TOTAL_LEVELS) {
                 scoreBoard.addScore(scoreManager.getScore());
@@ -393,6 +407,9 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, KeyLis
         }
     }
 
+    /**
+     * Starts the next wave and adjusts the pacing for the current level
+     */
     private void startNextWave() {
         soundManager.playBattleMusic();
         waveNumber++;
@@ -407,6 +424,9 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, KeyLis
         statusMessage = "Level " + levelNumber + " Wave " + waveNumber + " started.";
     }
 
+    /**
+     * Spawns one enemy using the current level rules
+     */
     private void spawnEnemy() {
         String type = getEnemyType(levelNumber, waveNumber, enemiesLeftToSpawn);
 
@@ -458,6 +478,9 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, KeyLis
         return 12;
     }
 
+    /**
+     * Teacher shortcut that awards the rest of the level immediately
+     */
     private void teacherClearLevel() {
         int scoreBonus = 0;
         int coinBonus = 0;
@@ -701,6 +724,7 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, KeyLis
     }
 
     private void drawPath(Graphics2D g) {
+        // The thick stroke gives the path a painted look
         g.setStroke(new BasicStroke(PATH_WIDTH));
         g.setColor(new Color(176, 151, 112));
 
@@ -771,6 +795,7 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, KeyLis
     }
 
     private void drawButton(Graphics2D g, Rectangle button, String text, boolean selected) {
+        // Reuse one button style so the menus still feel related
         if (selected) {
             g.setColor(new Color(94, 151, 145));
         } else {
@@ -799,6 +824,9 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, KeyLis
         g.drawString(text, (SCREEN_WIDTH - textWidth) / 2, y);
     }
 
+    /**
+     * Tries to place a tower at the clicked spot
+     */
     private void placeTower(int mouseX, int mouseY) {
         int towerX = mouseX / GRID_SIZE * GRID_SIZE + GRID_SIZE / 2;
         int towerY = mouseY / GRID_SIZE * GRID_SIZE + GRID_SIZE / 2;
@@ -829,6 +857,7 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, KeyLis
     }
 
     private void startFromTitleButtons(int x, int y) {
+        // Title buttons just route to the next screen
         if (startButton.contains(x, y)) {
             startNewRun();
         } else if (selectLevelButton.contains(x, y)) {
@@ -843,6 +872,7 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, KeyLis
     }
 
     private void startFromLevelSelectButtons(int x, int y) {
+        // Level select is the same idea, just with different starting points
         if (levelOneButton.contains(x, y)) {
             startLevel(1);
         } else if (levelTwoButton.contains(x, y)) {
@@ -861,6 +891,7 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, KeyLis
     }
 
     private void handleEndScreenButtons(int x, int y) {
+        // End screens only need retry or a way back to the menu
         if (retryButton.contains(x, y)) {
             if (screen == GAME_OVER) {
                 restartFromCurrentLevel();
@@ -873,6 +904,7 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, KeyLis
     }
 
     private void handlePlayingButtons(int x, int y) {
+        // In play, a click either picks a tower or places one
         if (basicButton.contains(x, y)) {
             selectedTowerType = "Basic";
         } else if (rapidButton.contains(x, y)) {
@@ -884,6 +916,9 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, KeyLis
         }
     }
 
+    /**
+     * Checks whether a tower can be placed at the given grid position
+     */
     private boolean isValidTowerLocation(int x, int y) {
         if (y < TOP_BAR_HEIGHT + 20 || x < 20 || x > SCREEN_WIDTH - 20 || y > SCREEN_HEIGHT - 20) {
             return false;
@@ -910,6 +945,9 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, KeyLis
         return true;
     }
 
+    /**
+     * Checks if a point sits too close to a straight path segment
+     */
     private boolean isNearPathSegment(int x, int y, Point a, Point b) {
         int buffer = PATH_WIDTH / 2 + 22;
 
@@ -943,6 +981,7 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, KeyLis
         int x = e.getX();
         int y = e.getY();
 
+        // Each screen handles clicks a little differently
         if (screen == TITLE) {
             startFromTitleButtons(x, y);
         } else if (screen == LEVEL_SELECT) {
@@ -960,6 +999,7 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, KeyLis
     public void keyPressed(KeyEvent e) {
         int key = e.getKeyCode();
 
+        // Keyboard shortcuts only matter during the end screens and play
         if ((screen == GAME_OVER || screen == WIN) && key == KeyEvent.VK_R) {
             if (screen == GAME_OVER) {
                 restartFromCurrentLevel();
