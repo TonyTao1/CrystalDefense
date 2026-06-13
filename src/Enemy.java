@@ -14,7 +14,7 @@ import javax.imageio.ImageIO;
 public class Enemy implements Comparable<Enemy> {
 
     // Images are shared by all enemies.
-    private static BufferedImage monsterImage = loadMonsterImage();
+    private static BufferedImage monsterImage = loadImage("resources/enemy_monster.png");
     private static BufferedImage eliteImage = loadImage("resources/enemy_elite.png");
 
     // Movement and stat values for one enemy.
@@ -51,39 +51,34 @@ public class Enemy implements Comparable<Enemy> {
         if (type.equals("Elite")) {
             maxHealth = 230;
             speed = 0.75;
-            reward = 60;
+            reward = 30;
             scoreValue = 320;
             size = 50;
             color = new Color(94, 64, 110);
         } else if (type.equals("Runner")) {
             maxHealth = 45;
             speed = 2.2;
-            reward = 18;
+            reward = 10;
             scoreValue = 90;
             size = 22;
             color = new Color(229, 115, 115);
         } else if (type.equals("Tank")) {
             maxHealth = 120;
             speed = 1.0;
-            reward = 35;
+            reward = 18;
             scoreValue = 180;
             size = 30;
             color = new Color(126, 87, 194);
         } else {
             maxHealth = 70;
             speed = 1.5;
-            reward = 25;
+            reward = 12;
             scoreValue = 120;
             size = 26;
             color = new Color(66, 165, 245);
         }
 
         health = maxHealth;
-    }
-
-    private static BufferedImage loadMonsterImage() {
-        // Normal enemies use this picture.
-        return loadImage("resources/enemy_monster.png");
     }
 
     private static BufferedImage loadImage(String fileName) {
@@ -139,11 +134,11 @@ public class Enemy implements Comparable<Enemy> {
         int imageWidth = imageHeight;
 
         if (image != null) {
-            imageWidth = (int) Math.round(imageHeight * ((double) image.getWidth() / image.getHeight()));
+            imageWidth = imageHeight * image.getWidth() / image.getHeight();
         }
 
-        int drawX = (int) Math.round(x - imageWidth / 2.0);
-        int drawY = (int) Math.round(y - imageHeight / 2.0);
+        int drawX = (int) x - imageWidth / 2;
+        int drawY = (int) y - imageHeight / 2;
         if (type.equals("Elite")) {
             drawY -= 14;
         }
@@ -152,8 +147,8 @@ public class Enemy implements Comparable<Enemy> {
         if (image != null) {
             g.drawImage(image, drawX, drawY, imageWidth, imageHeight, null);
         } else {
-            int fallbackX = (int) Math.round(x - size / 2.0);
-            int fallbackY = (int) Math.round(y - size / 2.0);
+            int fallbackX = (int) x - size / 2;
+            int fallbackY = (int) y - size / 2;
             g.setColor(color);
             g.fillOval(fallbackX, fallbackY, size, size);
             g.setColor(new Color(40, 45, 50));
@@ -161,9 +156,13 @@ public class Enemy implements Comparable<Enemy> {
         }
 
         // Health bar.
-        int barWidth = type.equals("Elite") ? imageWidth : size + 8;
+        int barWidth = size + 8;
+        if (type.equals("Elite")) {
+            barWidth = imageWidth;
+        }
+
         int barHeight = 5;
-        int barX = (int) Math.round(x - barWidth / 2.0);
+        int barX = (int) x - barWidth / 2;
         int barY = drawY - 10;
         double healthRatio = (double) health / maxHealth;
 
@@ -209,7 +208,13 @@ public class Enemy implements Comparable<Enemy> {
     @Override
     public int compareTo(Enemy other) {
         // Farther enemies come first.
-        return Double.compare(other.distanceTravelled, distanceTravelled);
+        if (distanceTravelled > other.distanceTravelled) {
+            return -1;
+        } else if (distanceTravelled < other.distanceTravelled) {
+            return 1;
+        }
+
+        return 0;
     }
 
     public double getX() {

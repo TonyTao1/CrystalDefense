@@ -1,7 +1,5 @@
-import java.util.HashMap;
-
 /**
- * Tracks score, coins, crystal health, and defeated enemy statistics.
+ * Tracks score, coins, and crystal health.
  */
 public class ScoreManager {
     // Main player stats.
@@ -9,11 +7,8 @@ public class ScoreManager {
     private int score;
     private int crystalHealth;
     private int enemiesDefeated;
-    private HashMap<String, Integer> defeatedByType;
 
     public ScoreManager() {
-        // Map stores how many of each enemy type was defeated.
-        defeatedByType = new HashMap<String, Integer>();
         reset();
     }
 
@@ -23,7 +18,6 @@ public class ScoreManager {
         score = 0;
         crystalHealth = 20;
         enemiesDefeated = 0;
-        defeatedByType.clear();
     }
 
     public boolean spendCoins(int amount) {
@@ -54,15 +48,6 @@ public class ScoreManager {
         enemiesDefeated++;
         addCoins(enemy.getReward());
         score += enemy.getScoreValue();
-
-        // Update the enemy type count in the map.
-        String enemyType = enemy.getType();
-        Integer oldCount = defeatedByType.get(enemyType);
-        if (oldCount == null) {
-            defeatedByType.put(enemyType, 1);
-        } else {
-            defeatedByType.put(enemyType, oldCount + 1);
-        }
     }
 
     public boolean isCrystalDestroyed() {
@@ -84,9 +69,5 @@ public class ScoreManager {
 
     public int getEnemiesDefeated() {
         return enemiesDefeated;
-    }
-
-    public HashMap<String, Integer> getDefeatedByType() {
-        return defeatedByType;
     }
 }

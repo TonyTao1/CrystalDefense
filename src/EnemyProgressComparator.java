@@ -1,12 +1,17 @@
 import java.util.Comparator;
 
 /**
- * Sorts enemies by how close they are to the crystal.
+ * Sorts enemies by how far they have moved.
  */
 public class EnemyProgressComparator implements Comparator<Enemy> {
     @Override
     public int compare(Enemy first, Enemy second) {
-        // Larger distance means closer to the crystal.
-        return Double.compare(second.getDistanceTravelled(), first.getDistanceTravelled());
+        if (first.getDistanceTravelled() > second.getDistanceTravelled()) {
+            return -1;
+        } else if (first.getDistanceTravelled() < second.getDistanceTravelled()) {
+            return 1;
+        }
+
+        return 0;
     }
 }

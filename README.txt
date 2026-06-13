@@ -1,41 +1,39 @@
 Crystal Defense
-ICS4U Initial Framework
+ICS4U Final Project
+Tony Tao
+Completed individually
 
-How to run from the CrystalDefense folder:
+The way to play
+- Click Start Game to begin from level 1
+- Click Select Level if you want to start from level 1, 2, or 3
+- Pick Basic, Rapid, or Heavy tower from the top bar
+- Click beside the path to place a tower
+- Towers shoot enemies automatically
+- Defeat enemies to get coins and score
+- Protect the crystal until all 3 levels are fnished
+- Press R after winning or losing to play again
+- Press Esc during the game to go back to the menu
 
-1. Compile:
-   javac -d bin src/*.java
+Main feature
+- Title screen, instructions, about page, level select, score board, win screen, and game over screen
+- Level 2 has branching paths.
+- Level 3 has more paths and a second enemy spawn point
+- Enemies choose a random path in later levels
+- Basic, Rapid, and Heavy towers
+- Normal, Runner, Tank, and Elite enemies
+- Coins, score, waves, and crystal health
+- Menu music, battle music, and enemy defeat sound
+- Score board saves the top 5 winning scores
+- Uses ArrayList, HashMap, Comparable, Comparator, sort, and binary search
 
-2. Run:
-   java -cp bin Main
+Extra things added
+- Level select menu
+- Score board
+- Enemy and tower images
+- Background music and sound effects
 
-Current status:
-- Title screen, instructions screen, about screen, game screen, win screen, and game over screen exist.
-- The title screen includes a Select Level menu, so the player can start from Level 1, 2, or 3.
-- Enemies move along a fixed path.
-- The game now has 3 levels.
-- All levels use a dungeon-style background image.
-- Level 2 has branching paths and enemies randomly choose a route.
-- Level 3 has more complex paths and a second enemy spawn point.
-- Level 2 and Level 3 include Elite enemies with more health and slower movement.
-- Menu music loops on the title, level select, instructions, and about screens.
-- Battle music loops during each level and stops when the level ends.
-- A sound effect plays when an enemy is defeated.
-- Player can select tower types and place towers with coins.
-- Towers automatically shoot enemies in range.
-- Bullets damage enemies.
-- Coins, score, wave number, and crystal health are tracked.
-- ArrayList, HashMap, Comparable, and Comparator are already included in the code.
+Bugs
+- If sound files or image files are moved, the game may show simple shapes or play without sound
 
-Not finished yet:
-- Original image assets.
-- More balancing.
-- Final polished README details.
-- Optional leaderboard.
-
-Controls:
-- Click Start Game to play.
-- Click a tower button at the top to choose a tower type.
-- Click on grass beside the path to place the selected tower.
-- Press R after winning or losing to restart.
-- Press Esc during the game to return to the title screen.
+Missing from original plan
+- Planned to have more levels but failed
